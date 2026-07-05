@@ -1,0 +1,35 @@
+services:
+  agent-cli:
+    build: .
+    image: proxmox-ai-agent:latest
+    profiles: ["cli"]
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /root/.ssh:/root/.ssh:ro
+    stdin_open: true
+    tty: true
+    command: ["python", "ai_agent.py"]
+
+  telegram-bot:
+    build: .
+    image: proxmox-ai-agent:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /root/.ssh:/root/.ssh:ro
+    command: ["python", "bot_telegram.py"]
+
+  slack-bot:
+    build: .
+    image: proxmox-ai-agent:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /root/.ssh:/root/.ssh:ro
+    command: ["python", "bot_slack.py"]

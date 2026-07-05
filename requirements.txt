@@ -1,0 +1,7 @@
+proxmoxer
+requests
+openai
+python-dotenv
+python-telegram-bot
+slack-bolt
+aiohttp
