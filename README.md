@@ -1,6 +1,7 @@
 # proxmox-ai-agent  
 AI-powered assistant for managing Proxmox Virtual Environment using natural-language commands.  
 
+![alt text](ai-agent-slack.png)
 ## Overview  
 This repository contains an AI agent that interacts with the Proxmox VE REST API to perform tasks like creating VMs, obtaining SSH access and applying configuration changes. The agent uses a language model to parse user requests and maps them to API calls via the `proxmoxer` Python library. Optionally, workflows can be orchestrated with n8n for conversational interactions.  
 
