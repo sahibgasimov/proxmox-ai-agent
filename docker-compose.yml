@@ -33,3 +33,15 @@ services:
       - .:/app
       - /root/.ssh:/root/.ssh:ro
     command: ["python", "bot_slack.py"]
+
+  monitor:
+    build: .
+    image: proxmox-ai-agent:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /root/.ssh:/root/.ssh:ro
+    command: ["python", "monitor.py"]
+

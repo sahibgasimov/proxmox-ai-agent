@@ -1,27 +1,27 @@
 # proxmox-ai-agent  
 AI-powered assistant for managing Proxmox Virtual Environment using natural-language commands.  
 
-![alt text](ai-agent-slack.png)
 ## Overview  
-This repository contains an AI agent that interacts with the Proxmox VE REST API to perform tasks like creating VMs, obtaining SSH access and applying configuration changes. The agent uses a language model to parse user requests and maps them to API calls via the `proxmoxer` Python library. Optionally, workflows can be orchestrated with n8n for conversational interactions.  
+This repository contains an AI agent that interacts with the Proxmox VE REST API to perform tasks like creating VMs, Monitoring VM's and host's, obtaining SSH access and applying configuration changes. The agent uses a language model to parse user requests and maps them to API calls via the `proxmoxer` Python library. Optionally, workflows can be orchestrated with n8n for conversational interactions.  
 
 ## Files  
 - `agents.md` – describes the agent architecture, capabilities and setup.  
 - `diagram.md` – contains a Mermaid diagram illustrating the system architecture.  
 
 ## Getting Started  
-1. Configure Proxmox credentials, OpenAI/Ollama LLM keys, and Slack/Telegram tokens in `.env`.
-2. **Build and Run Bots (Slack & Telegram)**:
+1. Configure Proxmox credentials, OpenAI/Ollama LLM keys, and Slack/Telegram tokens in `.env` (see env.example file).
+2. **Build and Run Services (Slack, Telegram, & Monitor)**:
    ```bash
    docker compose build
    docker compose up -d
    ```
-   *Note: If you do not want to run a particular application (e.g. you want the Telegram bot but not the Slack bot), simply comment out (grey out using `#`) that service definition in `docker-compose.yml` before building and starting the containers.*
+   *Note: If you do not want to run a particular application (e.g. you want the Telegram bot and Monitor but not the Slack bot), simply comment out (grey out using `#`) that service definition in `docker-compose.yml` before building and starting the containers.*
 
 3. **Interactive CLI Mode**:
    ```bash
    docker compose run --rm agent-cli
    ```
+
 
 
 ## Bot Setup Summary
@@ -60,6 +60,8 @@ Configure one of the following blocks in `.env`:
 * **Automatic Name Resolution**: Translates guest names and aliases (including typos) to their actual VMID and node using the embedded `memory.md` context.
 * **Unified Power Operations**: Start, stop, and reboot VMs and LXC containers.
 * **LXC/QEMU Auto-Detection**: Dynamically checks guest types via Proxmox cluster resources to execute the correct start/stop/reboot commands and prevent API errors.
+* **Standalone Resource Monitoring**: Automatically evaluates CPU, memory, and disk usage for all cluster nodes, VMs, and containers, sending alerts directly to Slack and Telegram when thresholds are crossed.
+
 
 ## Architecture  
 A high-level architecture diagram is provided in `diagram.md` using Mermaid syntax. The agent receives natural-language commands, interprets them with a language model, and calls the Proxmox API to perform tasks like VM creation, SSH access and configuration.
