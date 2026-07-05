@@ -2,17 +2,33 @@
 
 ```mermaid
 graph TD
-    User["User"]
-    Agent["AI Agent (LLM interface)"]
-    Proxmoxer["Proxmoxer Client"]
+    User["User (Slack / Telegram / CLI)"]
+    Telegram["Telegram Cloud API"]
+    Slack["Slack Cloud API (Socket Mode)"]
+    
+    subgraph Standalone Containerized Stack
+        TelegramBot["Telegram Bot Service (bot_telegram.py)"]
+        SlackBot["Slack Bot Service (bot_slack.py)"]
+        CLI["Interactive CLI Service (ai_agent.py)"]
+        CoreAgent["Agent Completions Core (ai_agent.py)"]
+    end
+    
+    LLM["LLM Backend (OpenAI / Local Ollama)"]
     ProxmoxAPI["Proxmox VE REST API"]
-    ProxmoxServer["Proxmox Server"]
+    ProxmoxCluster["Proxmox VE Cluster Nodes"]
 
-    User -->|Natural-language command| Agent
-    Agent -->|Interpret request| Proxmoxer
-    Proxmoxer -->|API call| ProxmoxAPI
-    ProxmoxAPI -->|Execute operation| ProxmoxServer
-    ProxmoxServer -->|Response| ProxmoxAPI
-    ProxmoxAPI -->|Result| Agent
-    Agent -->|Reply| User
+    User <-->|Chat / API| Telegram
+    User <-->|Chat / Socket Mode| Slack
+    
+    Telegram <--> TelegramBot
+    Slack <--> SlackBot
+    User <-->|Interactive terminal| CLI
+    
+    TelegramBot --> CoreAgent
+    SlackBot --> CoreAgent
+    CLI --> CoreAgent
+    
+    CoreAgent <-->|Chat Completions & Tool Spec| LLM
+    CoreAgent <-->|Proxmoxer Library calls| ProxmoxAPI
+    ProxmoxAPI <-->|Execute VM / LXC operations| ProxmoxCluster
 ```
