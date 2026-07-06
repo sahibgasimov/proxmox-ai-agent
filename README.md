@@ -1,6 +1,39 @@
 # proxmox-ai-agent  
 AI-powered assistant for managing Proxmox Virtual Environment using natural-language commands.  
 
+```mermaid
+graph TD
+    User["User (Slack / Telegram / CLI)"]
+    Telegram["Telegram Cloud API"]
+    Slack["Slack Cloud API (Socket Mode)"]
+    
+    subgraph Standalone Containerized Stack
+        TelegramBot["Telegram Bot Service (bot_telegram.py)"]
+        SlackBot["Slack Bot Service (bot_slack.py)"]
+        CLI["Interactive CLI Service (ai_agent.py)"]
+        CoreAgent["Agent Completions Core (ai_agent.py)"]
+    end
+    
+    LLM["LLM Backend (OpenAI / Local Ollama)"]
+    ProxmoxAPI["Proxmox VE REST API"]
+    ProxmoxCluster["Proxmox VE Cluster Nodes"]
+
+    User <-->|Chat / API| Telegram
+    User <-->|Chat / Socket Mode| Slack
+    
+    Telegram <--> TelegramBot
+    Slack <--> SlackBot
+    User <-->|Interactive terminal| CLI
+    
+    TelegramBot --> CoreAgent
+    SlackBot --> CoreAgent
+    CLI --> CoreAgent
+    
+    CoreAgent <-->|Chat Completions & Tool Spec| LLM
+    CoreAgent <-->|Proxmoxer Library calls| ProxmoxAPI
+    ProxmoxAPI <-->|Execute VM / LXC operations| ProxmoxCluster
+```
+
 ## Overview  
 This repository contains an AI agent that interacts with the Proxmox VE REST API to perform tasks like creating VMs, Monitoring VM's and host's, obtaining SSH access and applying configuration changes. The agent uses a language model to parse user requests and maps them to API calls via the `proxmoxer` Python library. Optionally, workflows can be orchestrated with n8n for conversational interactions.  
 
